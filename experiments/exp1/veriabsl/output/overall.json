@@ -1,0 +1,212 @@
+{
+    "speed_pldi09_fig4_4": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "speed_pldi09_fig4_5": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "speed_pldi10_ex3": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "speed_pldi10_ex4": {
+        "total_files": 1000,
+        "successful": 491,
+        "failed": 0,
+        "unknown": 509,
+        "rate": 0.491
+    },
+    "speed_popl10_fig2_1": {
+        "total_files": 1000,
+        "successful": 736,
+        "failed": 0,
+        "unknown": 264,
+        "rate": 0.736
+    },
+    "speed_popl10_fig2_2": {
+        "total_files": 1000,
+        "successful": 780,
+        "failed": 0,
+        "unknown": 220,
+        "rate": 0.78
+    },
+    "speed_popl10_nested_multiple": {
+        "total_files": 1000,
+        "successful": 874,
+        "failed": 0,
+        "unknown": 126,
+        "rate": 0.874
+    },
+    "speed_popl10_nested_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_multiple": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_single_2": {
+        "total_files": 1000,
+        "successful": 254,
+        "failed": 0,
+        "unknown": 746,
+        "rate": 0.254
+    },
+    "t07": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t08": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t10": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t11": {
+        "total_files": 1000,
+        "successful": 779,
+        "failed": 0,
+        "unknown": 221,
+        "rate": 0.779
+    },
+    "t13": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t15": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t16": {
+        "total_files": 1000,
+        "successful": 0,
+        "failed": 0,
+        "unknown": 1000,
+        "rate": 0.0
+    },
+    "t19": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t20": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t27": {
+        "total_files": 1000,
+        "successful": 519,
+        "failed": 0,
+        "unknown": 481,
+        "rate": 0.519
+    },
+    "t28": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "t30": {
+        "total_files": 1000,
+        "successful": 278,
+        "failed": 0,
+        "unknown": 722,
+        "rate": 0.278
+    },
+    "t47": {
+        "total_files": 1000,
+        "successful": 521,
+        "failed": 0,
+        "unknown": 479,
+        "rate": 0.521
+    },
+    "speed_popl10_sequential_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "rate": 1.0
+    },
+    "speed_pldi09_fig1": {
+        "total_files": 1000,
+        "successful": 523,
+        "failed": 0,
+        "unknown": 477,
+        "rate": 0.523
+    },
+    "custom_1": {
+        "total_files": 1000,
+        "successful": 99,
+        "failed": 0,
+        "unknown": 901,
+        "rate": 0.099
+    },
+    "custom_2": {
+        "total_files": 1000,
+        "successful": 95,
+        "failed": 0,
+        "unknown": 905,
+        "rate": 0.095
+    },
+    "custom_3": {
+        "total_files": 1000,
+        "successful": 94,
+        "failed": 0,
+        "unknown": 906,
+        "rate": 0.094
+    },
+    "custom_4": {
+        "total_files": 1000,
+        "successful": 107,
+        "failed": 0,
+        "unknown": 893,
+        "rate": 0.107
+    }
+}

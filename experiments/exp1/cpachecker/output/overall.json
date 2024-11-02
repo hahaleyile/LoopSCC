@@ -1,0 +1,242 @@
+{
+    "speed_pldi09_fig4_4": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_pldi09_fig4_5": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_pldi10_ex3": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_pldi10_ex4": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_fig2_1": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_fig2_2": {
+        "total_files": 1000,
+        "successful": 780,
+        "failed": 0,
+        "unknown": 220,
+        "error": 0,
+        "rate": 0.78
+    },
+    "speed_popl10_nested_multiple": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_nested_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_multiple": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_single_2": {
+        "total_files": 1000,
+        "successful": 254,
+        "failed": 0,
+        "unknown": 746,
+        "error": 0,
+        "rate": 0.254
+    },
+    "t07": {
+        "total_files": 1000,
+        "successful": 472,
+        "failed": 0,
+        "unknown": 528,
+        "error": 0,
+        "rate": 0.472
+    },
+    "t08": {
+        "total_files": 1000,
+        "successful": 121,
+        "failed": 0,
+        "unknown": 879,
+        "error": 0,
+        "rate": 0.121
+    },
+    "t10": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "t11": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "t13": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "t15": {
+        "total_files": 1000,
+        "successful": 950,
+        "failed": 0,
+        "unknown": 50,
+        "error": 0,
+        "rate": 0.95
+    },
+    "t16": {
+        "total_files": 1000,
+        "successful": 28,
+        "failed": 956,
+        "unknown": 16,
+        "error": 0,
+        "rate": 0.028
+    },
+    "t19": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "t20": {
+        "total_files": 1000,
+        "successful": 511,
+        "failed": 0,
+        "unknown": 489,
+        "error": 0,
+        "rate": 0.511
+    },
+    "t27": {
+        "total_files": 1000,
+        "successful": 519,
+        "failed": 0,
+        "unknown": 481,
+        "error": 0,
+        "rate": 0.519
+    },
+    "t28": {
+        "total_files": 1000,
+        "successful": 900,
+        "failed": 0,
+        "unknown": 100,
+        "error": 0,
+        "rate": 0.9
+    },
+    "t30": {
+        "total_files": 1000,
+        "successful": 278,
+        "failed": 462,
+        "unknown": 260,
+        "error": 0,
+        "rate": 0.278
+    },
+    "t47": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_sequential_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "unknown": 0,
+        "error": 0,
+        "rate": 1.0
+    },
+    "speed_pldi09_fig1": {
+        "total_files": 1000,
+        "successful": 523,
+        "failed": 0,
+        "unknown": 477,
+        "error": 0,
+        "rate": 0.523
+    },
+    "custom_1": {
+        "total_files": 1000,
+        "successful": 100,
+        "failed": 0,
+        "unknown": 898,
+        "error": 2,
+        "rate": 0.1
+    },
+    "custom_2": {
+        "total_files": 1000,
+        "successful": 95,
+        "failed": 0,
+        "unknown": 905,
+        "error": 0,
+        "rate": 0.095
+    },
+    "custom_3": {
+        "total_files": 1000,
+        "successful": 94,
+        "failed": 0,
+        "unknown": 906,
+        "error": 0,
+        "rate": 0.094
+    },
+    "custom_4": {
+        "total_files": 1000,
+        "successful": 108,
+        "failed": 0,
+        "unknown": 892,
+        "error": 0,
+        "rate": 0.108
+    }
+}
