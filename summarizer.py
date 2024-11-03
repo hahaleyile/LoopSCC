@@ -392,6 +392,7 @@ class Summarizer:
             <
             int(piecewise_recurrence.oscillation.interval.args[0])
         )
+        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
         # add constraint of end out of oscillation interval
         summary.summary[-1].append(
             summary.next_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
@@ -402,6 +403,7 @@ class Summarizer:
 
         # case 2: end inside the oscillation interval
         summary.summary.append([])
+        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
         for symbol_name in summary.next_var.keys():
             if symbol_name not in used_symbols:
                 summary.summary[-1].append(
@@ -441,6 +443,7 @@ class Summarizer:
         sub_domain = piecewise_recurrence.subDomains[1]
         recurrences: list[RecurrenceRelation] = [RecurrenceRelation(assign) for assign in sub_domain.path.assigns]
         summary.append_assigns([recurrence.closed_form for recurrence in recurrences])
+        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
         used_symbols = set()
         for recurrence in recurrences:
             used_symbols.add(recurrence.closed_form.lvalue.symbols[0].name)
@@ -465,6 +468,7 @@ class Summarizer:
 
         # case 4: end inside the oscillation interval
         summary.summary.append([])
+        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
         for symbol_name in summary.next_var.keys():
             if symbol_name not in used_symbols:
                 summary.summary[-1].append(
