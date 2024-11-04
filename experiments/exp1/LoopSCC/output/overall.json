@@ -1,0 +1,172 @@
+{
+    "speed_pldi09_fig4_4": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_pldi09_fig4_5": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_pldi10_ex3": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_pldi10_ex4": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_fig2_1": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_fig2_2": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_nested_multiple": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_nested_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_multiple": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_simple_single_2": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t07": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t08": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t10": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t11": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t13": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t15": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t16": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t19": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t20": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t27": "Can't Handle",
+    "t28": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "t30": "Can't Handle",
+    "t47": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_sequential_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_pldi09_fig1": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "custom_1": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "custom_2": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "custom_3": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "custom_4": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    }
+}
