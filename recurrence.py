@@ -211,25 +211,34 @@ class Oscillation:
 
                 lhs_int = int(lhs)
                 cur_val = lhs_int
-                left_iter = 0
                 left_addon = sub_domains[0].related_operations[0].rvalue.addends
-                right_iter = 0
                 right_addon = sub_domains[1].related_operations[0].rvalue.addends
                 cnt = 0
-                while cnt != int(self.interval.args[1] - self.interval.args[0] + 1):
+                visted = set()
+                while cnt != int(rhs - lhs + 1):
+                    for value in range(lhs_int, int(rhs + 1)):
+                        if value not in visted:
+                            start_val = value
+                            cur_val = value
+                            break
                     self.val_cycle.append([])
                     self.iter_cycle.append([])
+                    left_iter = 0
+                    right_iter = 0
                     while True:
                         self.val_cycle[-1].append(cur_val)
+                        visted.add(cur_val)
                         if cur_val < self.intersection:
                             cur_val += left_addon
                             left_iter += 1
                         else:
                             cur_val += right_addon
                             right_iter += 1
+                        if cur_val != start_val and cur_val in visted:
+                            raise Exception("Invalid oscillation cycle")
                         self.iter_cycle[-1].append((left_iter, right_iter))
                         cnt += 1
-                        if cur_val == lhs_int:
+                        if cur_val == start_val:
                             break
             case _:
                 raise Exception("Only INT type can handle right now")
