@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 x, y = INT.define_int("x"), INT.define_int("y")
@@ -20,8 +20,8 @@ loop = CFG.define_loop([[x < 100]], [
     ]
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 tests = [
     [(x, -6115579), (y, 794677), ],

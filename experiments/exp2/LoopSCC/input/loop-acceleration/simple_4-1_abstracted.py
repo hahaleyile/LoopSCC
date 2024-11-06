@@ -1,7 +1,7 @@
 ```python
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 x = INT.define_int("x")
@@ -16,8 +16,8 @@ loop = CFG.define_loop([[x > 1]], [
     )
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 test = [(x, 4194577)]
@@ -33,7 +33,7 @@ In this code:
 
 *   We define the input variables `x`.
 *   We define the loop condition and body in the format specified.
-*   We pass the loop to the PFG and Summarizer and summarize it.
+*   We pass the loop to the SPath_Graph and Summarizer and summarize it.
 *   We test the loop with an initial value and assert that the result satisfies the required condition.
 *   Note that in your test case, the division and modulo are working on signed numbers. Hence you might need some changes in the C code if you want the same functionality in the python code.
 

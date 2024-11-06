@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 i, j, k = INT.define_int("i"), INT.define_int("j"), INT.define_int("k")
@@ -13,8 +13,8 @@ loop = CFG.define_loop([[k < 0x0fffffff]], [
     )
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 result = summarizer.solve([(i,0),(j,0),(k,0)])

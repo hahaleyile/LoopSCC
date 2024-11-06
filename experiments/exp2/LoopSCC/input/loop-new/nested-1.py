@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 import z3
 
@@ -29,8 +29,8 @@ loop = CFG.define_loop([[i < n]], [
     ]
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 
 i_pre = z3.Int('i_0')
 i_post = z3.Int('i')

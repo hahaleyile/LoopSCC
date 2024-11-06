@@ -1,7 +1,7 @@
 # can;t handle
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 x, y = INT.define_int("x"), INT.define_int("y")
@@ -13,8 +13,8 @@ loop = CFG.define_loop([[x < 6]], [
     )
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 # Define initial values

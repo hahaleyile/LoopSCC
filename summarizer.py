@@ -3,13 +3,13 @@ import z3
 from block import Path
 from int import INT, MUL_INT
 from node import Assign
-from pfg import SCC, PFG
+from spath_graph import SCC, SPath_Graph
 from recurrence import RecurrenceRelation, PiecewiseRecurrenceRelation, Oscillation
 
 
 class Summarizer:
-    def __init__(self, pfg: PFG):
-        self.pfg = pfg
+    def __init__(self, spg: SPath_Graph):
+        self.spg = spg
         self.scc_summary: dict[int, Summary] = {}
         self.traces_summary: list = []
         self.traces_symbols: list[dict[str, z3.Int]] = []
@@ -97,7 +97,7 @@ class Summarizer:
                                              + iter_cycle[-1][1] * oscillation.var_operation[var][1])
                                     temp_solver.add(new_symbol == symbols[var] + value * iter1)
                                     symbols[var] = new_symbol
-                                temp_solver.add(self.pfg.cfg.arcs_desc[(0, 1)].to_z3(symbols))
+                                temp_solver.add(self.spg.cfg.arcs_desc[(0, 1)].to_z3(symbols))
                                 temp_symbols = symbols.copy()
                                 for var in oscillation.var_operation.keys():
                                     new_symbol = z3.Int(f"{var}_2")
@@ -108,7 +108,7 @@ class Summarizer:
                                 temp_solver.add(
                                     z3.Not(
                                         z3.And(
-                                            self.pfg.cfg.arcs_desc[(0, 1)].to_z3(symbols)
+                                            self.spg.cfg.arcs_desc[(0, 1)].to_z3(symbols)
                                         )
                                     )
                                 )
@@ -129,7 +129,7 @@ class Summarizer:
                                         symbols[var] = new_symbol
                                     temp_solver.push()
                                     temp_solver.add(
-                                        self.pfg.cfg.arcs_desc[(0, 1)].to_z3(symbols)
+                                        self.spg.cfg.arcs_desc[(0, 1)].to_z3(symbols)
                                     )
                                     if temp_solver.check() == z3.sat:
                                         temp_solver.pop()
@@ -168,7 +168,7 @@ class Summarizer:
             symbols[symbol.name] = z3_var
             solver.add(z3_var == init_value[1])
         solver.push()
-        solver.add(self.pfg.cfg.arcs_desc[(0, 1)].to_z3(symbols))
+        solver.add(self.spg.cfg.arcs_desc[(0, 1)].to_z3(symbols))
         if solver.check() == z3.unsat:
             return [(init_value[0].symbols[0].name, init_value[1]) for init_value in init_values]
         solver.pop()
@@ -182,13 +182,13 @@ class Summarizer:
 
     def summarize(self):
         visited = set()
-        for trace in self.pfg.scc_paths:
+        for trace in self.spg.scc_paths:
             for scc_index in trace:
                 if scc_index in visited:
                     continue
                 visited.add(scc_index)
-                self.scc_summary[scc_index] = self.scc_summarize(self.pfg.scc[scc_index])
-        for trace in self.pfg.scc_paths:
+                self.scc_summary[scc_index] = self.scc_summarize(self.spg.scc[scc_index])
+        for trace in self.spg.scc_paths:
             trace_summary = self.trace_summarize(trace)
             self.traces_summary.append(trace_summary[0])
             self.traces_symbols.append(trace_summary[1])
@@ -221,12 +221,12 @@ class Summarizer:
         summary = []
         # get all symbols used in trace
         symbols: dict[str, z3.Int] = {}
-        loop_cond_symbols = self.pfg.cfg.arcs_desc[(0, 1)].get_symbols()
+        loop_cond_symbols = self.spg.cfg.arcs_desc[(0, 1)].get_symbols()
         for symbol_name in loop_cond_symbols:
             symbols[symbol_name] = z3.Int(f"{symbol_name}_0")
         for trace_index in trace:
-            for path_index in self.pfg.scc[trace_index].nodes:
-                path = self.pfg.paths[path_index]
+            for path_index in self.spg.scc[trace_index].nodes:
+                path = self.spg.paths[path_index]
 
                 for assign in path.assigns:
                     symbols[assign.lvalue.symbols[0].name] = z3.Int(f"{assign.lvalue.symbols[0].name}_0")
@@ -237,7 +237,7 @@ class Summarizer:
 
         # add constraints for the first scc
         if len(trace) > 0:
-            match self.get_scc_type(self.pfg.scc[trace[0]]):
+            match self.get_scc_type(self.spg.scc[trace[0]]):
                 case 2 | 1 | 0:
                     summary.append([])
                     for symbol_name in symbols.keys():
@@ -252,7 +252,7 @@ class Summarizer:
 
         # connect previous scc to next scc, also connect scc to end
         for trace_index in range(len(trace)):
-            match self.get_scc_type(self.pfg.scc[trace[trace_index]]):
+            match self.get_scc_type(self.spg.scc[trace[trace_index]]):
                 case 2:
                     if trace_index != len(trace) - 1:
                         raise Exception("Two node scc should execute forever unless exit")
@@ -261,7 +261,7 @@ class Summarizer:
                     for i in [0, 2]:
                         summary[-1][i].append(
                             z3.Not(
-                                self.pfg.cfg.arcs_desc[(0, 1)].to_z3(self.scc_summary[trace[trace_index]].next_var)
+                                self.spg.cfg.arcs_desc[(0, 1)].to_z3(self.scc_summary[trace[trace_index]].next_var)
                             )
                         )
                 case 1 | 0:
@@ -275,22 +275,22 @@ class Summarizer:
                                     symbols[symbol_name] = self.scc_summary[trace[trace_index]].next_var[symbol_name]
                         summary[-1].append(
                             z3.Not(
-                                self.pfg.cfg.arcs_desc[(0, 1)].to_z3(symbols)
+                                self.spg.cfg.arcs_desc[(0, 1)].to_z3(symbols)
                             )
                         )
                         tmp_symbols = symbols.copy()
                         from_break = False
-                        for symbol_name in self.pfg.cfg.arcs_desc[(0, 1)].get_symbols():
+                        for symbol_name in self.spg.cfg.arcs_desc[(0, 1)].get_symbols():
                             if f"T{symbol_name}" in self.scc_summary[trace[trace_index]].pre_var.keys():
                                 tmp_symbols[symbol_name] = self.scc_summary[trace[trace_index]].pre_var[
                                     f"T{symbol_name}"]
                                 from_break = True
                         if from_break:
                             summary[-1].append(
-                                self.pfg.cfg.arcs_desc[(0, 1)].to_z3(tmp_symbols)
+                                self.spg.cfg.arcs_desc[(0, 1)].to_z3(tmp_symbols)
                             )
                     else:
-                        next_scc = self.pfg.scc[trace[trace_index + 1]]
+                        next_scc = self.spg.scc[trace[trace_index + 1]]
                         match self.get_scc_type(next_scc):
                             case 2 | 1 | 0:
                                 for symbol_name in self.scc_summary[trace[trace_index + 1]].pre_var.keys():
@@ -306,7 +306,7 @@ class Summarizer:
         return [summary, symbols]
 
     def summarize_one_node(self, scc: SCC) -> "Summary":
-        node: Path = self.pfg.paths[scc.nodes[0]]
+        node: Path = self.spg.paths[scc.nodes[0]]
         summary = Summary()
         summary.append_assigns(node.assigns)
         cond_symbols = node.precond.get_symbols()
@@ -320,7 +320,7 @@ class Summarizer:
     # contains closed form with iteration number symbol
     # eliminate iteration number symbol when analyse scc list (also called trace)
     def summarize_one_node_scc(self, scc: SCC) -> "Summary":
-        node: Path = self.pfg.paths[scc.nodes[0]]
+        node: Path = self.spg.paths[scc.nodes[0]]
         recurrences: list[RecurrenceRelation] = [RecurrenceRelation(assign) for assign in node.assigns]
         summary = Summary()
         summary.append_assigns([recurrence.closed_form for recurrence in recurrences])
@@ -365,7 +365,7 @@ class Summarizer:
 
     # noinspection PyTypeChecker
     def summarize_two_node_scc(self, scc: SCC):
-        piecewise_recurrence = PiecewiseRecurrenceRelation(self.pfg, scc.nodes)
+        piecewise_recurrence = PiecewiseRecurrenceRelation(self.spg, scc.nodes)
         summary = Summary()
         # init pre_var and next_var
         for subDomain in piecewise_recurrence.subDomains:

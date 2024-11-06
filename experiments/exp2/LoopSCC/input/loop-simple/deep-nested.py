@@ -1,7 +1,7 @@
 # can't handle
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 import z3
 
@@ -51,8 +51,8 @@ loop = CFG.define_loop([[a<0xffffffff]], [
     )
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 
 a_pre = z3.Int('a_0')
 a_post = z3.Int('a')

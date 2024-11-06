@@ -1,7 +1,7 @@
 from cfg import CFG
 from int import INT
 
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 x, i = INT.define_int("x"), INT.define_int("i")
@@ -26,10 +26,10 @@ loop = CFG.define_loop([[i < 100000000]], [
 
 print(loop.to_dot())
 print(loop.get_dominators(1, len(loop.nodes) - 1))
-pfg = PFG(loop)
-print(len(pfg.paths))
-print(pfg.to_dot())
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+print(len(spg.paths))
+print(spg.to_dot())
+summarizer = Summarizer(spg)
 summarizer.summarize()
 tests = [
     [(x, 1), (i, 0)],

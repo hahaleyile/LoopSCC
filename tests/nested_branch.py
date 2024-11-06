@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from recurrence import PiecewiseSubDomain
 
 """
@@ -123,11 +123,11 @@ loop = CFG.define_loop([[i < 100]], [
 print(loop.to_dot())
 print(loop.get_dominators(1, len(loop.nodes) - 1))
 print(loop.get_dominators(3, 11))
-pfg = PFG(loop)
-print(len(pfg.paths))
-for path in pfg.paths:
+spg = SPath_Graph(loop)
+print(len(spg.paths))
+for path in spg.paths:
     print(path)
-# for path_arc in pfg.path_arcs:
+# for path_arc in spg.path_arcs:
 #     print(path_arc)
-t = PiecewiseSubDomain(pfg.paths[2])
+t = PiecewiseSubDomain(spg.paths[2])
 pass

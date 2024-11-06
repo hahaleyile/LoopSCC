@@ -2,7 +2,7 @@ import z3
 
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 n, j, k = INT.define_int("n"), INT.define_int("j"), INT.define_int("k")
@@ -14,8 +14,8 @@ loop = CFG.define_loop([[j < n, n > 0]], [
     ),
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 k_pre = z3.Int('k_0')

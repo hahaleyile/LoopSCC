@@ -3,7 +3,7 @@ Here is the converted Python code based on the given C code:
 ```python
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 import z3
 
@@ -22,8 +22,8 @@ loop = CFG.define_loop(
     ]
 )
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 # Define input and output variables

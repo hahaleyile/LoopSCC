@@ -6,7 +6,7 @@ from block import Path
 from constraint import Comparison
 from int import INT, Symbol
 from node import Assign
-from pfg import PFG
+from spath_graph import SPath_Graph
 
 
 class RecurrenceRelation:
@@ -52,12 +52,12 @@ class RecurrenceRelation:
 
 
 class PiecewiseRecurrenceRelation:
-    def __init__(self, pfg: PFG, scc: list[int]):
+    def __init__(self, spg: SPath_Graph, scc: list[int]):
         self.subDomains: list[PiecewiseSubDomain] = []
         self.oscillation: Oscillation = None
 
         for index in scc:
-            self.subDomains.append(PiecewiseSubDomain(pfg.paths[index]))
+            self.subDomains.append(PiecewiseSubDomain(spg.paths[index]))
         if len(self.subDomains) > 2:
             raise Exception("Cannot process more than two nodes scc")
         if not self.subDomains[0].interval.is_disjoint(self.subDomains[1].interval):

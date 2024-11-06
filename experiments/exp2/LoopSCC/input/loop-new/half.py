@@ -1,7 +1,7 @@
 # can't handle
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 i, n, k,t = INT.define_int("i"), INT.define_int("n"), INT.define_int("k"), INT.define_int("t")
@@ -23,8 +23,8 @@ loop = CFG.define_loop([[i < 2*k]], [
     )
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 import z3

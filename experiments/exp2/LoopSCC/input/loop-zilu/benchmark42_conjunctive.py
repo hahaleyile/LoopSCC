@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 import z3
 
@@ -16,9 +16,9 @@ loop = CFG.define_loop([[x > 0]], [
     )
 ])
 
-# Initialize the PFG and Summarizer
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+# Initialize the spg and Summarizer
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 
 # Summarize the loop
 summarizer.summarize()

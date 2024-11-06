@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 x = INT.define_int("x")
@@ -10,8 +10,8 @@ loop = CFG.define_loop([[x >= 10, x<=4294967295]], [
         (x, x + 2),
     )
 ])
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 result = summarizer.solve([(x, 10)])

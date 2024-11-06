@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 ## Define Symbolic Variables
@@ -17,8 +17,8 @@ loop = CFG.define_loop([[a < 0]], [
 test = [(a, 6)]
 
 ## Loop Analysis
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 ## Result Verification

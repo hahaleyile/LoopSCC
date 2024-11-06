@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 import z3
 
@@ -16,8 +16,8 @@ loop = CFG.define_loop([[x < 100, y < 100]], [
 ])
 
 # Analyze loop
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 # Result verification (Type 1: Non-deterministic Variables)

@@ -2,7 +2,7 @@ import z3
 
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 low, mid, high = INT.define_int("low"), INT.define_int("mid"), INT.define_int("high")
@@ -15,8 +15,8 @@ loop = CFG.define_loop([[mid > 0]], [
     ),
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 low_pre = z3.Int('low_0')

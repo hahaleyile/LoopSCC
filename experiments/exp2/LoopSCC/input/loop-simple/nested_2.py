@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 import z3
 
@@ -31,8 +31,8 @@ loop = CFG.define_loop([[a < 6]], [
 
 
 # Loop analysis
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 result = summarizer.solve([(a, 0), (b, 6)])

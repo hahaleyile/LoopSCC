@@ -1,6 +1,6 @@
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 
 i, dir = INT.define_int("i"), INT.define_int("dir")
@@ -20,8 +20,8 @@ loop = CFG.define_loop([[i > 0, i < 1000000]], [
     ]
 ])
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 tests = [
     [(i, 414790), (dir, 1), ],

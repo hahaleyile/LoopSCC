@@ -61,7 +61,7 @@ def path_to_end(path: Path, loop_cond: Condition):
         return False
 
 
-class PFG:
+class SPath_Graph:
     def __init__(self, cfg: CFG):
         self.cfg = cfg
         self.branch = Branch(1, cfg.finish_node, cfg)
@@ -126,7 +126,7 @@ class PFG:
         self.scc_paths = new_scc_paths
 
     def to_dot(self):
-        dot = "digraph pfg {\n"
+        dot = "digraph spg {\n"
         dot += "    start [label=\"start\"]\n"
         for i in range(len(self.paths)):
             label = "->".join([str(x) for x in self.paths[i].chain])

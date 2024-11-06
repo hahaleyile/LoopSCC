@@ -3,7 +3,7 @@ Here's the Python code that meets the specified requirements:
 ```python
 from cfg import CFG
 from int import INT
-from pfg import PFG
+from spath_graph import SPath_Graph
 from summarizer import Summarizer
 import z3
 
@@ -23,8 +23,8 @@ loop = CFG.define_loop([[x > 0]], [
 ])
 # END HAVOCABSTRACTION
 
-pfg = PFG(loop)
-summarizer = Summarizer(pfg)
+spg = SPath_Graph(loop)
+summarizer = Summarizer(spg)
 summarizer.summarize()
 
 summarizer.check_after_loop([x > 0], {"x": x_post}, [x_post % 2 == 0])
