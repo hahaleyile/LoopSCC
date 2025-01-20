@@ -1,0 +1,33 @@
+import time
+
+import angr
+import claripy
+
+project = angr.Project('../input/leapfrog', auto_load_libs=False)
+func_addr = project.loader.main_object.get_symbol("func")
+x = claripy.BVS('x', 32)
+y = claripy.BVS('y', 32)
+t = claripy.BVS('t', 32)
+
+state = project.factory.call_state(func_addr.rebased_addr, x, y, t)
+state.solver.add(t < 50)
+
+simgr = project.factory.simulation_manager(state)
+
+start = time.time()
+
+max_paths = 0
+max_constraints = 0
+while len(simgr.active) > 0:
+    simgr.step()
+
+    active_paths = len(simgr.active)
+    if active_paths > max_paths:
+        max_paths = active_paths
+        constraint_count = sum(len(active.solver.constraints) for active in simgr.active)
+        max_constraints = constraint_count
+
+end = time.time()
+print(f"Total Execution Time: {end - start:.2f} seconds")
+print(f"Max Active Paths: {max_paths}")
+print(f"Max Constraint Count: {max_constraints}")

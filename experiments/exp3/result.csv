@@ -1,0 +1,8 @@
+ID,Time,Paths,Constraints
+t13,316.86,86,3268
+t15,178.51,36,719
+t16,,,
+leapfrog,28.24,91,1628
+leapfrog_asymmetric,3.07,17,290
+leapspin,0.45,2,4
+leapthree,0.42,2,4
