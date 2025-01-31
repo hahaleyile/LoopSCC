@@ -3,8 +3,8 @@ import z3
 from block import Path
 from int import INT, MUL_INT
 from node import Assign
+from recurrence import Oscillation, PiecewiseRecurrenceRelation, RecurrenceRelation
 from spath_graph import SCC, SPath_Graph
-from recurrence import RecurrenceRelation, PiecewiseRecurrenceRelation, Oscillation
 
 
 class Summarizer:
@@ -31,11 +31,11 @@ class Summarizer:
         for summary in trace_summary:
             # type 2 scc is the end of the trace
             if type(summary[0]) is list:
-                for sub_summary, sub_summary_index in zip(summary, range(len(summary))):
+                for sub_summary in summary:
                     inside_oscillation = False
                     solver.push()
                     # end inside oscillation interval
-                    if sub_summary_index in [1, 3, 4]:
+                    if type(sub_summary[-1]) is Oscillation:
                         inside_oscillation = True
                         solver.add(sub_summary[:-1])
                     else:
@@ -142,7 +142,11 @@ class Summarizer:
                                             raise Exception("Error finding solution")
                                         model = temp_solver.model()
                                         for symbol_name, z3_var in symbols.items():
-                                            res.append((symbol_name, str(model[z3_var])))
+                                            if symbol_name == oscillation.main_var:
+                                                res.append((symbol_name, str(oscillation.val_cycle[val_cycle_index]
+                                                                             [(iter_cycle_start + i + 1) % cycle_num])))
+                                            else:
+                                                res.append((symbol_name, str(model[z3_var])))
                                         return res
                                 break
                     break
@@ -258,12 +262,13 @@ class Summarizer:
                         raise Exception("Two node scc should execute forever unless exit")
                     summary.append([])
                     summary[-1] = self.scc_summary[trace[trace_index]].summary.copy()
-                    for i in [0, 2]:
-                        summary[-1][i].append(
-                            z3.Not(
-                                self.spg.cfg.arcs_desc[(0, 1)].to_z3(self.scc_summary[trace[trace_index]].next_var)
+                    for s in summary[-1]:
+                        if type(s[-1]) is not Oscillation:
+                            s.append(
+                                z3.Not(
+                                    self.spg.cfg.arcs_desc[(0, 1)].to_z3(self.scc_summary[trace[trace_index]].next_var)
+                                )
                             )
-                        )
                 case 1 | 0:
                     summary.append([])
                     summary[-1] = self.scc_summary[trace[trace_index]].summary[0].copy()
@@ -372,150 +377,14 @@ class Summarizer:
             for assign in subDomain.path.assigns:
                 summary.assign_to_z3(assign)
 
-        # 5 cases
-
-        # case 1: entry to the first subdomain and end outside the oscillation interval
-        sub_domain = piecewise_recurrence.subDomains[0]
-        recurrences: list[RecurrenceRelation] = [RecurrenceRelation(assign) for assign in sub_domain.path.assigns]
-        summary.append_assigns([recurrence.closed_form for recurrence in recurrences])
-        used_symbols = set()
-        for recurrence in recurrences:
-            used_symbols.add(recurrence.closed_form.lvalue.symbols[0].name)
-        for symbol_name in summary.next_var.keys():
-            if symbol_name not in used_symbols:
-                summary.summary[-1].append(
-                    summary.next_var[symbol_name] == summary.pre_var[symbol_name]
-                )
-        # add constraint of start out of oscillation interval
-        summary.summary[-1].append(
-            summary.pre_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-            <
-            int(piecewise_recurrence.oscillation.interval.args[0])
-        )
-        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
-        # add constraint of end out of oscillation interval
-        summary.summary[-1].append(
-            summary.next_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-            <
-            int(piecewise_recurrence.oscillation.interval.args[0])
-        )
-        summary.summary[-1].append(summary.pre_var['N'] > 0)
-
-        # case 2: end inside the oscillation interval
+        # add constraint of start inside of oscillation interval
         summary.summary.append([])
-        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
-        for symbol_name in summary.next_var.keys():
-            if symbol_name not in used_symbols:
-                summary.summary[-1].append(
-                    summary.next_var[symbol_name] == summary.pre_var[symbol_name]
-                )
-        for recurrence in recurrences:
-            assign = recurrence.closed_form
-            name = assign.lvalue.symbols[0].name
-
-            lz3: z3.ArithRef = summary.next_var[name]
-            if type(assign.rvalue) is INT:
-                rz3 = assign.rvalue.addends
-                for symbol, multiplier in zip(assign.rvalue.symbols, assign.rvalue.multipliers):
-                    rz3 += summary.pre_var[symbol.name] * multiplier
-            else:
-                rz3 = assign.rvalue
-            summary.summary[-1].append(lz3 == rz3)
-            if assign.lvalue.symbols[0].name == sub_domain.related_operations[0].lvalue.symbols[0].name:
-                summary.summary[-1].append(
-                    lz3
-                    >=
-                    int(piecewise_recurrence.oscillation.interval.args[0])
-                )
-                if type(assign.rvalue) is INT:
-                    rz3 += recurrence.pre_n_iteration.rvalue.addends
-                summary.summary[-1].append(rz3 < int(piecewise_recurrence.oscillation.interval.args[0]))
-
-        summary.summary[-1].append(summary.pre_var['N'] > 0)
-        summary.summary[-1].append(
-            summary.pre_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-            <
-            int(piecewise_recurrence.oscillation.interval.args[0])
-        )
-        summary.summary[-1].append(piecewise_recurrence.oscillation)
-
-        # case 3: entry to the second subdomain and end outside the oscillation interval
-        sub_domain = piecewise_recurrence.subDomains[1]
-        recurrences: list[RecurrenceRelation] = [RecurrenceRelation(assign) for assign in sub_domain.path.assigns]
-        summary.append_assigns([recurrence.closed_form for recurrence in recurrences])
-        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
-        used_symbols = set()
-        for recurrence in recurrences:
-            used_symbols.add(recurrence.closed_form.lvalue.symbols[0].name)
-        for symbol_name in summary.next_var.keys():
-            if symbol_name not in used_symbols:
-                summary.summary[-1].append(
-                    summary.next_var[symbol_name] == summary.pre_var[symbol_name]
-                )
-        # add constraint of start out of oscillation interval
-        summary.summary[-1].append(
-            summary.pre_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-            >
-            int(piecewise_recurrence.oscillation.interval.args[1])
-        )
-        # add constraint of end out of oscillation interval
-        summary.summary[-1].append(
-            summary.next_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-            >
-            int(piecewise_recurrence.oscillation.interval.args[1])
-        )
-        summary.summary[-1].append(summary.pre_var['N'] > 0)
-
-        # case 4: end inside the oscillation interval
-        summary.summary.append([])
-        summary.summary[-1].append(sub_domain.path.precond.to_z3(summary.pre_var))
-        for symbol_name in summary.next_var.keys():
-            if symbol_name not in used_symbols:
-                summary.summary[-1].append(
-                    summary.next_var[symbol_name] == summary.pre_var[symbol_name]
-                )
-        for recurrence in recurrences:
-            assign = recurrence.closed_form
-            name = assign.lvalue.symbols[0].name
-
-            lz3: z3.ArithRef = summary.next_var[name]
-            if type(assign.rvalue) is INT:
-                rz3 = assign.rvalue.addends
-                for symbol, multiplier in zip(assign.rvalue.symbols, assign.rvalue.multipliers):
-                    rz3 += summary.pre_var[symbol.name] * multiplier
-            else:
-                rz3 = assign.rvalue
-            summary.summary[-1].append(lz3 == rz3)
-            if assign.lvalue.symbols[0].name == sub_domain.related_operations[0].lvalue.symbols[0].name:
-                summary.summary[-1].append(
-                    lz3
-                    <=
-                    int(piecewise_recurrence.oscillation.interval.args[1])
-                )
-                if type(assign.rvalue) is INT:
-                    rz3 += recurrence.pre_n_iteration.rvalue.addends
-                summary.summary[-1].append(rz3 > int(piecewise_recurrence.oscillation.interval.args[1]))
-
-        summary.summary[-1].append(summary.pre_var['N'] > 0)
-        summary.summary[-1].append(
-            summary.pre_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-            >
-            int(piecewise_recurrence.oscillation.interval.args[1])
-        )
-        summary.summary[-1].append(piecewise_recurrence.oscillation)
-
-        # case 5: entry inside the oscillation interval
-        summary.summary.append([])
-        summary.summary[-1].append(
-            z3.Or(
-                summary.pre_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-                <=
-                int(piecewise_recurrence.oscillation.interval.args[1]),
-                summary.pre_var[sub_domain.related_operations[0].lvalue.symbols[0].name]
-                >=
-                int(piecewise_recurrence.oscillation.interval.args[0])
-            )
-        )
+        main_var = piecewise_recurrence.oscillation.main_var
+        expr = piecewise_recurrence.oscillation.interval_to_inequalities(main_var)
+        expr_need = z3.substitute(expr, (z3.Int(main_var), summary.pre_var[main_var]))
+        # x inside oscillation interval
+        summary.summary[-1].append(expr_need)
+        # i' = i
         for next_var_name in summary.next_var.keys():
             if next_var_name in summary.pre_var.keys():
                 summary.summary[-1].append(
@@ -524,6 +393,67 @@ class Summarizer:
                     summary.pre_var[next_var_name]
                 )
         summary.summary[-1].append(piecewise_recurrence.oscillation)
+
+        # add constraint of start inside of oscillation interval
+        for subDomain in piecewise_recurrence.subDomains:
+            recurrences: list[RecurrenceRelation] = [RecurrenceRelation(assign) for assign in subDomain.path.assigns]
+            used_symbols = set()
+            for recurrence in recurrences:
+                used_symbols.add(recurrence.closed_form.lvalue.symbols[0].name)
+            # first add end inside of oscillation interval
+            summary.summary.append([])
+            # x inside subDomain interval
+            summary.summary[-1].append(subDomain.path.precond.to_z3(summary.pre_var))
+            # y' = y if y not appear
+            for symbol_name in summary.next_var.keys():
+                if symbol_name not in used_symbols:
+                    summary.summary[-1].append(
+                        summary.next_var[symbol_name] == summary.pre_var[symbol_name]
+                    )
+            # append recurrences closed form
+            for recurrence in recurrences:
+                summary.summary[-1].append(summary.assign_to_z3(recurrence.closed_form))
+            # these closed form should inside of the oscillation interval
+            expr_need = z3.substitute(expr, (z3.Int(main_var), summary.next_var[main_var]))
+            summary.summary[-1].append(expr_need)
+            # N > 0
+            summary.summary[-1].append(summary.pre_var['N'] > 0)
+            # pre n variables
+            pre_n_var: dict[str, z3.Int] = {}
+            for recurrence in recurrences:
+                if (recurrence.pre_n_iteration.lvalue.symbol_num != 1 or
+                        recurrence.pre_n_iteration.lvalue.multipliers[0] != 1):
+                    raise Exception("lvalue should be a single symbol")
+                symbol_name = recurrence.pre_n_iteration.lvalue.symbols[0].name
+                pre_n_var[symbol_name] = Summary.get_next_z3_var_by_name(f"T{symbol_name}")
+                r_expr = sum(recurrence.pre_n_iteration.rvalue.to_z3(summary.pre_var))
+                summary.summary[-1].append(pre_n_var[symbol_name] == r_expr)
+            # pre main var outside of oscillation interval
+            expr_need = z3.substitute(expr, (z3.Int(main_var), pre_n_var[main_var]))
+            summary.summary[-1].append(z3.Not(expr_need))
+            # pre n variables satisfied the loop condition
+            summary.summary[-1].append(self.spg.cfg.arcs_desc[(0, 1)].to_z3(pre_n_var))
+            summary.summary[-1].append(piecewise_recurrence.oscillation)
+
+            # then add end outside of oscillation interval
+            summary.summary.append([])
+            # x inside subDomain interval
+            summary.summary[-1].append(subDomain.path.precond.to_z3(summary.pre_var))
+            # y' = y if y not appear
+            for symbol_name in summary.next_var.keys():
+                if symbol_name not in used_symbols:
+                    summary.summary[-1].append(
+                        summary.next_var[symbol_name] == summary.pre_var[symbol_name]
+                    )
+            # append recurrences closed form
+            for recurrence in recurrences:
+                summary.summary[-1].append(summary.assign_to_z3(recurrence.closed_form))
+            # these closed form should outside of the oscillation interval
+            expr_need = z3.substitute(expr, (z3.Int(main_var), summary.next_var[main_var]))
+            summary.summary[-1].append(z3.Not(expr_need))
+            # N > 0
+            summary.summary[-1].append(summary.pre_var['N'] > 0)
+            # todo: add pre n variables satisfied the loop condition
 
         return summary
 

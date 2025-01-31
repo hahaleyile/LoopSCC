@@ -1,6 +1,8 @@
 import copy
 
 import sympy
+import z3
+from sympy import And, Eq, Ge, Gt, Le, Lt, Ne, Not, Or
 
 from block import Path
 from constraint import Comparison
@@ -65,11 +67,12 @@ class PiecewiseRecurrenceRelation:
         self.subDomains = sorted(self.subDomains, key=lambda x: x.interval.inf)
         assign0 = self.subDomains[0].related_operations[0]
         assign1 = self.subDomains[1].related_operations[0]
-        if (assign0.rvalue.multipliers[0] != 1 or
-                assign0.rvalue.addends <= 0 or
-                assign1.rvalue.multipliers[0] != 1 or
-                assign1.rvalue.addends >= 0):
-            raise Exception("Subdomains are not monotonic")
+        if type(assign0.rvalue) is INT and type(assign1.rvalue) is INT:
+            if (assign0.rvalue.multipliers[0] != 1 or
+                    assign0.rvalue.addends <= 0 or
+                    assign1.rvalue.multipliers[0] != 1 or
+                    assign1.rvalue.addends >= 0):
+                raise Exception("Subdomains are not monotonic")
         self.oscillation = Oscillation(self.subDomains[0].related_operations[0].lvalue, self.subDomains)
 
 
@@ -119,9 +122,11 @@ class PiecewiseSubDomain:
                 continue
             match constraint.comparison:
                 case Comparison.EQUAL:
-                    inequalities.append(lvalue == rvalue)
+                    inequalities.append(sympy.Eq(lvalue, rvalue))
                 case Comparison.NOT_EQUAL:
-                    inequalities.append(lvalue != rvalue)
+                    self.interval = sympy.Interval.open(-float('inf'), rvalue).union(
+                        sympy.Interval.open(rvalue, float('inf')))
+                    return
                 case Comparison.LESS_THAN:
                     inequalities.append(lvalue < rvalue)
                 case Comparison.GREATER_THAN:
@@ -137,6 +142,12 @@ class PiecewiseSubDomain:
         relations = [(i.lhs, i.rel_op, i.rhs) for i in
                      [i.canonical for i in res.atoms(sympy.core.relational.Relational)]]
         relations_sorted = sorted(relations, key=lambda x: float(x[2]))
+        if len(relations_sorted) == 1:
+            if relations_sorted[0][1] == '==':
+                self.interval = sympy.Interval(relations_sorted[0][2], relations_sorted[0][2], False, False)
+                return
+            else:
+                raise Exception("Invalid inequality format")
         if relations_sorted[0][2] > relations_sorted[1][2]:
             raise Exception("Invalid inequality format")
         if relations_sorted[0][1] == '>=':
@@ -158,7 +169,6 @@ class PiecewiseSubDomain:
 class Oscillation:
     def __init__(self, oper_type, sub_domains: list[PiecewiseSubDomain]):
         self.interval: sympy.Interval = None
-        self.intersection: int = 0
         # iteration in cycle
         # for example, [1, 2, 3, 4, 5, 1, ...] is stored as [(0, 1), (1, 1), (2, 1), (2, 2), (2, 3)]
         self.iter_cycle: list[list[tuple[int, int]]] = []
@@ -171,74 +181,131 @@ class Oscillation:
         # then the data is {i: [1, -2]}
         self.var_operation: dict[str, list[int, int]] = {}
 
-        match oper_type:
-            case INT():
-                if sub_domains[0].interval.args[1] != sub_domains[1].interval.args[0]:
-                    raise Exception("Invalid oscillation interval")
-                lhs = sub_domains[1].interval.args[0]
-                if sub_domains[1].interval.left_open:
-                    lhs += 1
-                lhs += sub_domains[1].related_operations[0].rvalue.addends
-                rhs = sub_domains[0].interval.args[1]
-                if sub_domains[0].interval.right_open:
-                    rhs -= 1
-                rhs += sub_domains[0].related_operations[0].rvalue.addends
-                if not sub_domains[0].interval.contains(lhs) or not sub_domains[1].interval.contains(rhs):
-                    raise Exception("Invalid oscillation interval")
-                self.interval = sympy.Interval(lhs, rhs, False, False)
-                self.intersection = int(sub_domains[0].interval.args[1])
-                if not sub_domains[0].interval.right_open:
-                    self.intersection += 1
+        # calculate oscillation interval
+        init_interval = sympy.FiniteSet()
+        x = sympy.symbols(self.main_var)
+        funcs: dict[any, sympy.Interval] = {}
+        for sub_domain in sub_domains:
+            for operation in sub_domain.related_operations:
+                rvalue = operation.rvalue
+                func = None
+                match rvalue:
+                    case INT():
+                        func = rvalue.to_sympy()
+                    case int():
+                        func = rvalue
+                funcs[func] = sub_domain.interval
+                interval = sympy.imageset(x, func, sub_domain.interval)
+                for other_domain in sub_domains:
+                    if other_domain != sub_domain:
+                        init_interval = init_interval.union(interval.intersect(other_domain.interval))
+        self.interval = init_interval
 
-                # get other variables operation
-                for assign in sub_domains[0].path.assigns:
-                    if (type(assign.rvalue) is not INT
-                            or assign.rvalue.multipliers[0] != 1
-                            or assign.rvalue.symbols[0].name != assign.lvalue.symbols[0].name):
-                        raise Exception("Invalid assign format")
-                    self.var_operation[assign.lvalue.symbols[0].name] = []
-                    self.var_operation[assign.lvalue.symbols[0].name].extend([assign.rvalue.addends, 0])
-                for assign in sub_domains[1].path.assigns:
-                    if (type(assign.rvalue) is not INT
-                            or assign.rvalue.multipliers[0] != 1
-                            or assign.rvalue.symbols[0].name != assign.lvalue.symbols[0].name):
-                        raise Exception("Invalid assign format")
-                    if assign.lvalue.symbols[0].name not in self.var_operation.keys():
-                        self.var_operation[assign.lvalue.symbols[0].name] = []
-                        self.var_operation[assign.lvalue.symbols[0].name].extend([0, assign.rvalue.addends])
+        def image_piecewise(interval, funcs, x):
+            image = sympy.FiniteSet()
+            for func, sub_interval in funcs.items():
+                t = interval.intersect(sub_interval)
+                i = sympy.imageset(x, func, t)
+                image = image.union(i)
+            return image
+
+        image = image_piecewise(self.interval, funcs, x)
+        while not image.is_subset(self.interval):
+            self.interval = self.interval.union(image)
+            image = image_piecewise(self.interval, funcs, x)
+
+        visited = set()
+        discrete_interval = list(self.interval.intersect(sympy.S.Integers))
+        for value in discrete_interval:
+            cur_val = int(value)
+            if cur_val not in visited:
+                self.val_cycle.append([])
+                self.iter_cycle.append([])
+                iternum = [0, 0]
+                while cur_val not in visited:
+                    self.val_cycle[-1].append(cur_val)
+                    visited.add(cur_val)
+                    index = 0
+                    for func, interval in funcs.items():
+                        if cur_val in interval:
+                            iternum[index] += 1
+                            func = sympy.sympify(func)
+                            cur_val = int(func.subs(x, cur_val))
+                            break
+                        index += 1
                     else:
-                        self.var_operation[assign.lvalue.symbols[0].name][1] = assign.rvalue.addends
+                        raise Exception("Error")
+                    self.iter_cycle[-1].append(tuple(iternum))
 
-                lhs_int = int(lhs)
-                cur_val = lhs_int
-                left_addon = sub_domains[0].related_operations[0].rvalue.addends
-                right_addon = sub_domains[1].related_operations[0].rvalue.addends
-                cnt = 0
-                visted = set()
-                while cnt != int(rhs - lhs + 1):
-                    for value in range(lhs_int, int(rhs + 1)):
-                        if value not in visted:
-                            start_val = value
-                            cur_val = value
-                            break
-                    self.val_cycle.append([])
-                    self.iter_cycle.append([])
-                    left_iter = 0
-                    right_iter = 0
-                    while True:
-                        self.val_cycle[-1].append(cur_val)
-                        visted.add(cur_val)
-                        if cur_val < self.intersection:
-                            cur_val += left_addon
-                            left_iter += 1
-                        else:
-                            cur_val += right_addon
-                            right_iter += 1
-                        if cur_val != start_val and cur_val in visted:
-                            raise Exception("Invalid oscillation cycle")
-                        self.iter_cycle[-1].append((left_iter, right_iter))
-                        cnt += 1
-                        if cur_val == start_val:
-                            break
-            case _:
-                raise Exception("Only INT type can handle right now")
+        index = 0
+        for sub_domain in sub_domains:
+            for assign in sub_domain.path.assigns:
+                if assign.lvalue.symbols[0].name == self.main_var:
+                    continue
+                match assign.rvalue:
+                    case INT():
+                        symbol = assign.lvalue.symbols[0].name
+                        if (assign.rvalue.multipliers[0] != 1
+                                or assign.rvalue.symbols[0].name != symbol):
+                            raise Exception("Invalid assign format")
+                        if symbol not in self.var_operation.keys():
+                            self.var_operation[symbol] = []
+                        if index >= len(self.var_operation[symbol]):
+                            self.var_operation[symbol].extend([0] * (index - len(self.var_operation[symbol]) + 1))
+                        self.var_operation[symbol][index] = assign.rvalue.addends
+                    case _:
+                        raise Exception("Only INT type can handle right now")
+            index += 1
+
+    def interval_to_inequalities(self, var: str):
+        x = sympy.symbols(var)
+        expr = self.interval.as_relational(x)
+        z3_symbol = z3.Int(var)
+
+        def convert(expr):
+            match expr:
+                case sympy.Symbol():
+                    if expr != x:
+                        raise Exception("Error")
+                    return z3_symbol
+                case sympy.Integer():
+                    return int(expr)
+                case And():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return z3.And(arg0, arg1)
+                case Or():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return z3.Or(arg0, arg1)
+                case Not():
+                    arg0 = convert(expr.args[0])
+                    return z3.Not(arg0)
+                case Eq():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return arg0 == arg1
+                case Ge():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return arg0 >= arg1
+                case Gt():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return arg0 > arg1
+                case Le():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return arg0 <= arg1
+                case Lt():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return arg0 < arg1
+                case Ne():
+                    arg0 = convert(expr.args[0])
+                    arg1 = convert(expr.args[1])
+                    return arg0 != arg1
+                case _:
+                    raise Exception("Error")
+
+        return convert(expr)

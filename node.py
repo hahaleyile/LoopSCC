@@ -1,4 +1,5 @@
 import copy
+import z3
 
 from int import INT, MUL_INT
 
@@ -25,6 +26,11 @@ class Assign:
             return str(self.instr)
         else:
             return "Error"
+
+    def to_z3(self, lsymbols: dict[str, z3.Int], rsymbols: dict[str, z3.Int]):
+        lvalue = self.lvalue.to_z3(lsymbols)
+        rvalue = self.rvalue.to_z3(rsymbols)
+        return lvalue == rvalue
 
     @classmethod
     # add new assignment expression to assignment list

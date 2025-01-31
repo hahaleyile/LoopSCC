@@ -1,8 +1,9 @@
 import copy
 
+import sympy
 import z3
 
-from constraint import Constraint, Comparison
+from constraint import Comparison, Constraint
 
 
 class Symbol:
@@ -166,6 +167,26 @@ class INT:
             reverse_int.multipliers[i] = -reverse_int.multipliers[i]
         return reverse_int
 
+    def to_sympy(self):
+        result = 0
+        for i in range(self.symbol_num):
+            symbol = sympy.symbols(self.symbols[i].name)
+            result += symbol * self.multipliers[i]
+        if self.addends != 0:
+            result += self.addends
+        return result
+
+    def to_z3(self, symbols: dict[str, z3.Int]):
+        result = []
+        for i in range(self.symbol_num):
+            if self.multipliers[i] != 1:
+                result.append(symbols[self.symbols[i].name] * self.multipliers[i])
+            else:
+                result.append(symbols[self.symbols[i].name])
+        if self.addends != 0:
+            result.append(self.addends)
+        return result
+
     def __repr__(self):
         result = ""
         prefix = ""
@@ -234,22 +255,11 @@ class MUL_INT:
             raise NotImplemented
 
     def to_z3(self, symbols: dict[str, z3.Int]):
-        def INT_to_z3(a: INT):
-            result = []
-            for i in range(a.symbol_num):
-                if a.multipliers[i] != 1:
-                    result.append(symbols[a.symbols[i].name] * a.multipliers[i])
-                else:
-                    result.append(symbols[a.symbols[i].name])
-            if a.addends != 0:
-                result.append(a.addends)
-            return result
-
         if self.dimension < 1:
             raise Exception("dimension should be greater than 0")
-        result = INT_to_z3(self.multipliers[0])
+        result = self.multipliers[0].to_z3(symbols)
         for i in range(1, self.dimension):
-            multiplier = INT_to_z3(self.multipliers[i])
+            multiplier = self.multipliers[i].to_z3(symbols)
             new_result = []
             for a in result:
                 for b in multiplier:
@@ -262,7 +272,7 @@ class MUL_INT:
             new_result += result[i]
 
         if self.base_int.symbol_num > 0:
-            result = INT_to_z3(self.base_int)
+            result = self.base_int.to_z3(symbols)
             for i in range(len(result)):
                 new_result += result[i]
         return new_result
