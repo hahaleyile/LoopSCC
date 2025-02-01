@@ -1,7 +1,7 @@
 void func(int x,int y)
 {
     int z=0;
-    while(x<y)
+    while(x>y)
     {
         x=x-y-1;
         z=100+2*y;

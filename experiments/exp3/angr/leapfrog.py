@@ -10,24 +10,21 @@ y = claripy.BVS('y', 32)
 t = claripy.BVS('t', 32)
 
 state = project.factory.call_state(func_addr.rebased_addr, x, y, t)
-state.solver.add(t < 50)
+state.solver.add(t < 100)
 
 simgr = project.factory.simulation_manager(state)
+simgr.use_technique(angr.exploration_techniques.DFS())
 
 start = time.time()
 
-max_paths = 0
-max_constraints = 0
+cnt = 0
 while len(simgr.active) > 0:
     simgr.step()
 
-    active_paths = len(simgr.active)
-    if active_paths > max_paths:
-        max_paths = active_paths
-        constraint_count = sum(len(active.solver.constraints) for active in simgr.active)
-        max_constraints = constraint_count
+    if len(simgr.deadended) > 0:
+        cnt += len(simgr.deadended)
+        simgr.drop(stash="deadended")
 
 end = time.time()
 print(f"Total Execution Time: {end - start:.2f} seconds")
-print(f"Max Active Paths: {max_paths}")
-print(f"Max Constraint Count: {max_constraints}")
+print(cnt)
