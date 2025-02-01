@@ -426,7 +426,11 @@ class Summarizer:
                     raise Exception("lvalue should be a single symbol")
                 symbol_name = recurrence.pre_n_iteration.lvalue.symbols[0].name
                 pre_n_var[symbol_name] = Summary.get_next_z3_var_by_name(f"T{symbol_name}")
-                r_expr = sum(recurrence.pre_n_iteration.rvalue.to_z3(summary.pre_var))
+                match recurrence.pre_n_iteration.rvalue:
+                    case INT() | MUL_INT():
+                        r_expr = sum(recurrence.pre_n_iteration.rvalue.to_z3(summary.pre_var))
+                    case _:
+                        r_expr = recurrence.pre_n_iteration.rvalue
                 summary.summary[-1].append(pre_n_var[symbol_name] == r_expr)
             # pre main var outside of oscillation interval
             expr_need = z3.substitute(expr, (z3.Int(main_var), pre_n_var[main_var]))
@@ -512,6 +516,8 @@ class Summary:
             for symbol in assign.rvalue.base_int.symbols:
                 if symbol.name not in self.pre_var.keys():
                     self.pre_var[symbol.name] = Summary.get_next_z3_var_by_name(symbol.name)
+        if lvalue_symbol.name not in self.pre_var.keys():
+            self.pre_var[lvalue_symbol.name] = Summary.get_next_z3_var_by_name(lvalue_symbol.name)
         if lvalue_symbol.name not in self.next_var.keys():
             self.next_var[lvalue_symbol.name] = Summary.get_next_z3_var_by_name(lvalue_symbol.name)
 

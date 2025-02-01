@@ -237,6 +237,22 @@ class Oscillation:
                         raise Exception("Error")
                     self.iter_cycle[-1].append(tuple(iternum))
 
+        symbols = set()
+        for sub_domain in sub_domains:
+            for assign in sub_domain.path.assigns:
+                if assign.lvalue.symbols[0].name == self.main_var:
+                    continue
+                match assign.rvalue:
+                    case INT():
+                        symbol_name = assign.lvalue.symbols[0].name
+                        if (assign.rvalue.multipliers[0] != 1
+                                or assign.rvalue.symbols[0].name != symbol_name):
+                            raise Exception("Invalid assign format")
+                        symbols.add(symbol_name)
+                    case _:
+                        raise Exception("Only INT type can handle right now")
+        for symbol in symbols:
+            self.var_operation[symbol] = [0] * len(sub_domains)
         index = 0
         for sub_domain in sub_domains:
             for assign in sub_domain.path.assigns:
@@ -245,13 +261,6 @@ class Oscillation:
                 match assign.rvalue:
                     case INT():
                         symbol = assign.lvalue.symbols[0].name
-                        if (assign.rvalue.multipliers[0] != 1
-                                or assign.rvalue.symbols[0].name != symbol):
-                            raise Exception("Invalid assign format")
-                        if symbol not in self.var_operation.keys():
-                            self.var_operation[symbol] = []
-                        if index >= len(self.var_operation[symbol]):
-                            self.var_operation[symbol].extend([0] * (index - len(self.var_operation[symbol]) + 1))
                         self.var_operation[symbol][index] = assign.rvalue.addends
                     case _:
                         raise Exception("Only INT type can handle right now")
