@@ -394,7 +394,7 @@ class Summarizer:
                 )
         summary.summary[-1].append(piecewise_recurrence.oscillation)
 
-        # add constraint of start inside of oscillation interval
+        # add constraint of start outside of oscillation interval
         for subDomain in piecewise_recurrence.subDomains:
             recurrences: list[RecurrenceRelation] = [RecurrenceRelation(assign) for assign in subDomain.path.assigns]
             used_symbols = set()
@@ -457,7 +457,16 @@ class Summarizer:
             summary.summary[-1].append(z3.Not(expr_need))
             # N > 0
             summary.summary[-1].append(summary.pre_var['N'] > 0)
-            # todo: add pre n variables satisfied the loop condition
+            # add pre n variables satisfied the loop condition
+            for recurrence in recurrences:
+                match recurrence.pre_n_iteration.rvalue:
+                    case INT() | MUL_INT():
+                        r_expr = sum(recurrence.pre_n_iteration.rvalue.to_z3(summary.pre_var))
+                    case _:
+                        r_expr = recurrence.pre_n_iteration.rvalue
+                symbol_name = recurrence.pre_n_iteration.lvalue.symbols[0].name
+                summary.summary[-1].append(pre_n_var[symbol_name] == r_expr)
+            summary.summary[-1].append(self.spg.cfg.arcs_desc[(0, 1)].to_z3(pre_n_var))
 
         return summary
 

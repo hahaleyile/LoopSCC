@@ -30,7 +30,7 @@ summarizer = Summarizer(spg)
 summarizer.summarize()
 
 tests = [
-    [(t, 100), (x, 2), (y, 1)],
+    [(t, 21833), (x, -66045), (y, 59954)],
 ]
 for test in tests:
     x_val = 0

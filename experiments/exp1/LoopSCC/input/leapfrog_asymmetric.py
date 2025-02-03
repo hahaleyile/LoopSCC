@@ -16,7 +16,7 @@ loop = CFG.define_loop([[t > 0]], [
         ]),
         ([[k != 1]], [
             (
-                (k, 1),
+                (k, k + 2),
             )
         ]),
     ],
@@ -30,7 +30,7 @@ summarizer = Summarizer(spg)
 summarizer.summarize()
 
 tests = [
-    [(t, 100), (x, 2), (y, 1)],
+    [(t, 56600), (x, 12262), (y, -41371)],
 ]
 for test in tests:
     x_val = 0
