@@ -7,15 +7,15 @@ b, t, flag = INT.define_int("b"), INT.define_int("t"), INT.define_int("flag")
 
 loop = CFG.define_loop([[t > 0]], [
     [
-        ([[flag >= 1]], [
+        ([[flag == 1]], [
             (
                 (b, b - 1),
                 (flag, 0),
             )
         ]),
-        ([[flag < 1]], [
+        ([[flag == 0]], [
             (
-                (b, b - 1),
+                (b, b + 1),
                 (flag, 1),
             )
         ]),
