@@ -24,7 +24,9 @@ class RecurrenceRelation:
         self.pre_n_iteration = copy.deepcopy(self.relation)
         lvalue_symbol: Symbol = self.relation.lvalue.symbols[0]
         rvalue = self.relation.rvalue
-        if type(rvalue) is INT and rvalue.symbol_num > 0:
+        if type(rvalue) is INT:
+            if rvalue.symbol_num <= 0:
+                raise Exception("Error")
             if rvalue.symbol_num > 1:
                 if rvalue.multipliers[rvalue.symbol_index[lvalue_symbol.name]] != 1:
                     raise Exception("Recurrence relation can only process plus and minus operation")
@@ -48,9 +50,8 @@ class RecurrenceRelation:
             self.closed_form.rvalue.addends = 0
             self.closed_form.rvalue = self.closed_form.rvalue + addends * self.iter_num
             self.pre_n_iteration.rvalue = self.closed_form.rvalue - addends
-        # else:
-        #     self.closed_form.rvalue = rvalue
-        #     self.pre_n_iteration.rvalue = rvalue
+        else:
+            self.pre_n_iteration.rvalue = self.relation.lvalue
 
 
 class PiecewiseRecurrenceRelation:
