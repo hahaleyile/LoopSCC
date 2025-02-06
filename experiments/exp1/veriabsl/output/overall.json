@@ -1,4 +1,67 @@
 {
+    "leapdiff2": {
+        "total_files": 1000,
+        "successful": 501,
+        "failed": 0,
+        "unknown": 499,
+        "rate": 0.501
+    },
+    "leapfrog_asymmetric": {
+        "total_files": 1000,
+        "successful": 500,
+        "failed": 0,
+        "unknown": 500,
+        "rate": 0.5
+    },
+    "leapspin": {
+        "total_files": 1000,
+        "successful": 485,
+        "failed": 0,
+        "unknown": 515,
+        "rate": 0.485
+    },
+    "leapthree": {
+        "total_files": 1000,
+        "successful": 472,
+        "failed": 0,
+        "unknown": 528,
+        "rate": 0.472
+    },
+    "bobble": {
+        "total_files": 1000,
+        "successful": 519,
+        "failed": 0,
+        "unknown": 481,
+        "rate": 0.519
+    },
+    "inchworm": {
+        "total_files": 1000,
+        "successful": 505,
+        "failed": 0,
+        "unknown": 495,
+        "rate": 0.505
+    },
+    "leapfrog": {
+        "total_files": 1000,
+        "successful": 511,
+        "failed": 0,
+        "unknown": 489,
+        "rate": 0.511
+    },
+    "microbobble": {
+        "total_files": 1000,
+        "successful": 530,
+        "failed": 0,
+        "unknown": 470,
+        "rate": 0.53
+    },
+    "simple_bl": {
+        "total_files": 1000,
+        "successful": 524,
+        "failed": 0,
+        "unknown": 476,
+        "rate": 0.524
+    },
     "speed_pldi09_fig4_4": {
         "total_files": 1000,
         "successful": 1000,

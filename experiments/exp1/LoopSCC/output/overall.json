@@ -1,4 +1,59 @@
 {
+    "leapdiff2": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "leapfrog_asymmetric": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "leapspin": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "leapthree": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "bobble": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "inchworm": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "leapfrog": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "microbobble": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "simple_bl": "Can't Handle",
+    "speed_pldi09_fig1": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
     "speed_pldi09_fig4_4": {
         "total_files": 1000,
         "successful": 1000,
@@ -42,6 +97,12 @@
         "rate": 1.0
     },
     "speed_popl10_nested_single": {
+        "total_files": 1000,
+        "successful": 1000,
+        "failed": 0,
+        "rate": 1.0
+    },
+    "speed_popl10_sequential_single": {
         "total_files": 1000,
         "successful": 1000,
         "failed": 0,
@@ -128,42 +189,6 @@
     },
     "t30": "Can't Handle",
     "t47": {
-        "total_files": 1000,
-        "successful": 1000,
-        "failed": 0,
-        "rate": 1.0
-    },
-    "speed_popl10_sequential_single": {
-        "total_files": 1000,
-        "successful": 1000,
-        "failed": 0,
-        "rate": 1.0
-    },
-    "speed_pldi09_fig1": {
-        "total_files": 1000,
-        "successful": 1000,
-        "failed": 0,
-        "rate": 1.0
-    },
-    "custom_1": {
-        "total_files": 1000,
-        "successful": 1000,
-        "failed": 0,
-        "rate": 1.0
-    },
-    "custom_2": {
-        "total_files": 1000,
-        "successful": 1000,
-        "failed": 0,
-        "rate": 1.0
-    },
-    "custom_3": {
-        "total_files": 1000,
-        "successful": 1000,
-        "failed": 0,
-        "rate": 1.0
-    },
-    "custom_4": {
         "total_files": 1000,
         "successful": 1000,
         "failed": 0,
