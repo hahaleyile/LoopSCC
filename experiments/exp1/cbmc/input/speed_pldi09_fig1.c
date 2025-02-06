@@ -1,6 +1,7 @@
-#include <assert.h>
+#include <assert>
 #undef assert
 #define assert(C) __CPROVER_assert((C), "assertion"); __CPROVER_assume(C)
+
 
 void start(int x0, int y0) {
     int x = x0;

@@ -1,4 +1,43 @@
 {
+    "leapdiff2": "Can't Handle",
+    "leapfrog_asymmetric": "Can't Handle",
+    "leapspin": {
+        "total_files": 1000,
+        "successful": 133,
+        "failed": 867,
+        "rate": 0.133
+    },
+    "leapthree": {
+        "total_files": 1000,
+        "successful": 0,
+        "failed": 1000,
+        "rate": 0.0
+    },
+    "bobble": {
+        "total_files": 1000,
+        "successful": 0,
+        "failed": 1000,
+        "rate": 0.0
+    },
+    "inchworm": {
+        "total_files": 1000,
+        "successful": 0,
+        "failed": 1000,
+        "rate": 0.0
+    },
+    "leapfrog": {
+        "total_files": 1000,
+        "successful": 0,
+        "failed": 1000,
+        "rate": 0.0
+    },
+    "microbobble": {
+        "total_files": 1000,
+        "successful": 0,
+        "failed": 1000,
+        "rate": 0.0
+    },
+    "simple_bl": "Can't Handle",
     "speed_pldi09_fig4_4": {
         "total_files": 1000,
         "successful": 382,
